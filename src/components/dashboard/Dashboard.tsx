@@ -5,16 +5,24 @@ import React, { useState } from 'react'
 import { ImageGallery } from './ImageGallery'
 import Swal from 'sweetalert2'
 
+interface Role {
+    id: number,
+    role: string;
+}
+
 interface Usuario {
     id: number;
     nombre: string;
+    apellido: String;
     email: string;
     edad: number;
     sueldoBase: number,
     horas: number,
     costoHora: number,
-    activo: boolean;    
+    activo: boolean; 
+    role: Role   
 }
+
 
 
 export const Dashboard: React.FC = () => {
@@ -24,41 +32,71 @@ export const Dashboard: React.FC = () => {
     const usuarios: Usuario[] = [
         {
             id: 1,
-            nombre: 'Edwin Tumax',
+            nombre: 'Edwin',
+            apellido: 'Tumax',
             email: 'edwintumax@gmail.com',
             edad: 43,
             sueldoBase: 1200,
             horas: 180,
             costoHora: 12.30,
-            activo: true
+            activo: true,
+            role: {id: 0, role: ''}
         },
         {
             id: 2,
-            nombre: 'Juan Perez',
+            nombre: 'Juan',
+            apellido: 'Perez',
             email: 'juanperez@gmail.com',
             edad: 23,
             sueldoBase: 1800,
             horas: 160,
             costoHora: 10.30,
-            activo: false
+            activo: false,
+            role: {id: 0, role: ''}
+
         },
         {
             id: 3,
-            nombre: 'Marta Martinez',
+            nombre: 'Marta',
+            apellido: 'Martinez',
             email: 'martamartinez@gmail.com',
             edad: 45,
             sueldoBase: 4200,
             horas: 170,
             costoHora: 20.30,
-            activo: true
+            activo: true,
+            role: {id: 0, role: ''}
         }
     ]
 
+    const roles:  Role[] = [
+        {
+            id: 1,
+            role: 'ROLE_ADMIN'
+        },
+        {
+            id: 2,
+            role: 'ROLE_USER'
+        },
+        {
+            id: 3,
+            role: 'ROLE_SUSPEND'
+        }
+    ]
+
+    const baseUsuarios: Usuario[] = usuarios.map((u,i) => ({
+        ...u,
+        role: roles[i]
+    }));
 
     const calcularSueldo = (u: Usuario) : number => {
         return u.sueldoBase + (u.horas * u.costoHora);
     }
 
+    const obtenerNombreCompleto = (u: Usuario): string => {
+        const {nombre,apellido} = u;
+        return `${apellido} ${nombre}`
+    }
 
     const handlerSubmit = () => {
 
@@ -90,13 +128,14 @@ export const Dashboard: React.FC = () => {
                                 <TableCell>Edad</TableCell>
                                 <TableCell>Estado</TableCell>
                                 <TableCell>Sueldo Base</TableCell>
-                                <TableCell>Suel Total</TableCell>
+                                <TableCell>Sueldo Total</TableCell>
+                                <TableCell>Rol</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {usuarios.map((u: Usuario) => (
+                            {baseUsuarios.map((u: Usuario) => (
                                 <TableRow key={u.id}>
-                                    <TableCell>{u.nombre}</TableCell>
+                                    <TableCell>{obtenerNombreCompleto(u)}</TableCell>
                                     <TableCell>{u.email}</TableCell>
                                     <TableCell>{u.edad}</TableCell>
                                     <TableCell>{u.activo ? 'Usuario activo' : 'Usuario inactivo'}</TableCell>
@@ -107,6 +146,9 @@ export const Dashboard: React.FC = () => {
                                     })(u.sueldoBase)}</TableCell>
                                     <TableCell>
                                         <Typography sx={{fontWeight: 'bold', fontSize: 20}}>{calcularSueldo(u)}</Typography>                                    
+                                    </TableCell>
+                                    <TableCell>
+                                        {u.role.role}
                                     </TableCell>
                                 </TableRow>
                             ))}
