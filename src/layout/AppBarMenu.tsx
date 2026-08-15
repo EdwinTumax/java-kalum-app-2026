@@ -10,7 +10,7 @@ interface AppBarMenuProps {
 
 export const AppBarMenu: React.FC<AppBarMenuProps> = ({onMenuClick}) => {
   return (
-    <AppBar position='fixed'>
+    <AppBar position='sticky'>
         <Toolbar>
             <IconButton edge='start' color='inherit' aria-label='menu' sx={{mr: 2}} onClick={onMenuClick}>
                 <MenuIcon/>
