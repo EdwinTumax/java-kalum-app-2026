@@ -28,8 +28,8 @@ interface Usuario {
 export const Dashboard: React.FC = () => {
 
     const [sueldo,setSueldo] = useState(0);
-
-    const usuarios: Usuario[] = [
+    
+    const [usuarios, setUsuarios] = useState<Usuario[]>([
         {
             id: 1,
             nombre: 'Edwin',
@@ -67,7 +67,7 @@ export const Dashboard: React.FC = () => {
             activo: true,
             role: {id: 0, role: ''}
         }
-    ]
+    ]);
 
     const roles:  Role[] = [
         {
@@ -84,10 +84,13 @@ export const Dashboard: React.FC = () => {
         }
     ]
 
+
+    //Spread
     const baseUsuarios: Usuario[] = usuarios.map((u,i) => ({
         ...u,
         role: roles[i]
     }));
+
 
     const calcularSueldo = (u: Usuario) : number => {
         return u.sueldoBase + (u.horas * u.costoHora);
@@ -98,8 +101,10 @@ export const Dashboard: React.FC = () => {
         return `${apellido} ${nombre}`
     }
 
-    const handlerSubmit = () => {
-
+    // Rest
+    const handlerSubmit = () => {        
+        const usuariosAdmin = [...baseUsuarios.filter(u => u.role.role === 'ROLE_ADMIN')]; 
+        setUsuarios(usuariosAdmin);
     }
 
 
@@ -133,7 +138,7 @@ export const Dashboard: React.FC = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {baseUsuarios.map((u: Usuario) => (
+                            {usuarios.map((u: Usuario) => (
                                 <TableRow key={u.id}>
                                     <TableCell>{obtenerNombreCompleto(u)}</TableCell>
                                     <TableCell>{u.email}</TableCell>
