@@ -1,167 +1,96 @@
-import { SearchOutlined } from '@mui/icons-material'
-import { Button, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material'
-
-import React, { useState } from 'react'
+import { DeleteOutlined, EditOutlined, SearchOutlined, UpdateOutlined } from '@mui/icons-material'
+import { Button, Container, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material'
+import React, { useEffect, useState } from 'react'
 import { ImageGallery } from './ImageGallery'
 import Swal from 'sweetalert2'
-
-interface Role {
-    id: number,
-    role: string;
-}
-
-interface Usuario {
-    id: number;
-    nombre: string;
-    apellido: String;
-    email: string;
-    edad: number;
-    sueldoBase: number,
-    horas: number,
-    costoHora: number,
-    activo: boolean; 
-    role: Role   
-}
+import type { TechynicalCareer } from '../../interfaces/TechnicalCareer'
+import { getTechnicalCareerService } from '../../services/TechnicalCareerService'
 
 
 
 export const Dashboard: React.FC = () => {
 
-    const [sueldo,setSueldo] = useState(0);
-    
-    const [usuarios, setUsuarios] = useState<Usuario[]>([
-        {
-            id: 1,
-            nombre: 'Edwin',
-            apellido: 'Tumax',
-            email: 'edwintumax@gmail.com',
-            edad: 43,
-            sueldoBase: 1200,
-            horas: 180,
-            costoHora: 12.30,
-            activo: true,
-            role: {id: 0, role: ''}
-        },
-        {
-            id: 2,
-            nombre: 'Juan',
-            apellido: 'Perez',
-            email: 'juanperez@gmail.com',
-            edad: 23,
-            sueldoBase: 1800,
-            horas: 160,
-            costoHora: 10.30,
-            activo: false,
-            role: {id: 0, role: ''}
+    const [careers, setCareers] = useState<TechynicalCareer[]>([]);
 
-        },
-        {
-            id: 3,
-            nombre: 'Marta',
-            apellido: 'Martinez',
-            email: 'martamartinez@gmail.com',
-            edad: 45,
-            sueldoBase: 4200,
-            horas: 170,
-            costoHora: 20.30,
-            activo: true,
-            role: {id: 0, role: ''}
+    //Async & await
+    const loadCareers = async (): Promise<void> => {
+        try {
+            const response = await getTechnicalCareerService();
+            setCareers(response);
+        } catch (error) {
+            Swal.fire({
+                icon: "error",
+                title: "Carreras Técnicas",
+                text: `${error}`,
+                footer: "<a href=\"#\">Why do I have this issue?</a>"
+            });
         }
-    ]);
 
-    const roles:  Role[] = [
-        {
-            id: 1,
-            role: 'ROLE_ADMIN'
-        },
-        {
-            id: 2,
-            role: 'ROLE_USER'
-        },
-        {
-            id: 3,
-            role: 'ROLE_SUSPEND'
-        }
-    ]
-
-
-    //Spread
-    const baseUsuarios: Usuario[] = usuarios.map((u,i) => ({
-        ...u,
-        role: roles[i]
-    }));
-
-
-    const calcularSueldo = (u: Usuario) : number => {
-        return u.sueldoBase + (u.horas * u.costoHora);
     }
 
-    const obtenerNombreCompleto = (u: Usuario): string => {
-        const {nombre,apellido} = u;
-        return `${apellido} ${nombre}`
-    }
+    //Promesas
+    /*const loadCareers = (): Promise<void> => {
+        return getTechnicalCareerService().then((response) => {
+            setCareers(response);
+        }).catch(error => {
+            Swal.fire({
+                icon: "error",
+                title: "Carreras Técnicas",
+                text: error,
+                footer: "<a href=\"#\">Why do I have this issue?</a>"
+            });
+        });
+    }*/
 
-    // Rest
-    const handlerSubmit = () => {        
-        const usuariosAdmin = [...baseUsuarios.filter(u => u.role.role === 'ROLE_ADMIN')]; 
-        setUsuarios(usuariosAdmin);
-    }
+
+    useEffect(() => {
+        loadCareers();
+    }, []);
 
 
     return (
-        <Grid container sx={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
-            <ImageGallery />
-            <Grid>
-                <Typography sx={{ ml: 4, mr: 4 }}>Carreras Técnicas</Typography>
-            </Grid>
-            <Grid>
-                <Button color='primary' sx={{ padding: 2 }} onClick={handlerSubmit}>
-                    <SearchOutlined sx={{ fontSize: 30, mr: 2 }}></SearchOutlined>
-                    Buscar
-                </Button>
-            </Grid>
-            <Grid container size={12}>
-                <TextField type='text' variant='filled' fullWidth placeholder='Ingrese carrera técnica' label='carreras' sx={{ border: 'none', ml: 4, mr: 4 }} />
-            </Grid>
-            <Grid>
-                <TableContainer component={Paper} sx={{ ml: 4, mt: 2 }}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Nombre</TableCell>
-                                <TableCell>Email</TableCell>
-                                <TableCell>Edad</TableCell>
-                                <TableCell>Estado</TableCell>
-                                <TableCell>Sueldo Base</TableCell>
-                                <TableCell>Sueldo Total</TableCell>
-                                <TableCell>Rol</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {usuarios.map((u: Usuario) => (
-                                <TableRow key={u.id}>
-                                    <TableCell>{obtenerNombreCompleto(u)}</TableCell>
-                                    <TableCell>{u.email}</TableCell>
-                                    <TableCell>{u.edad}</TableCell>
-                                    <TableCell>{u.activo ? 'Usuario activo' : 'Usuario inactivo'}</TableCell>
-                                    <TableCell>{((sueldoBase: number) => {
-                                        return (
-                                            <Typography sx={{fontWeight: 'bold'}} >{sueldoBase}</Typography>
-                                        );
-                                    })(u.sueldoBase)}</TableCell>
-                                    <TableCell>
-                                        <Typography sx={{fontWeight: 'bold', fontSize: 20}}>{calcularSueldo(u)}</Typography>                                    
-                                    </TableCell>
-                                    <TableCell>
-                                        {u.role.role}
-                                    </TableCell>
+        <Container maxWidth="xl">
+            <Grid container spacing={2}>
+                <Grid size={12} sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <ImageGallery />
+                    <Typography variant='h4' sx={{ fontWeight: "bold" }}>Carreras Técnicas</Typography>
+                    <Button variant='contained' color='primary' startIcon={<SearchOutlined />} >
+                        Buscar
+                    </Button>
+                </Grid>
+                <Grid size={12}>
+                    <TextField type='text' variant='outlined' fullWidth placeholder='Ingrese carrera técnica' label='Buscar carrera' />
+                </Grid>
+                <Grid size={12}>
+                    <TableContainer component={Paper} elevation={3} sx={{ width: "100%", overflowX: "auto" }}>
+                        <Table>
+                            <TableHead>
+                                <TableRow sx={{ "& th": { fontWeight: "bold", fontSize: "1rem" } }}>
+                                    <TableCell>Carrera</TableCell>
+                                    <TableCell>Descripción</TableCell>
+                                    <TableCell>imagen</TableCell>
+                                    <TableCell>Acciones</TableCell>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                            </TableHead>
+                            <TableBody>
+                                {careers.map((c: TechynicalCareer) => (
+                                    <TableRow key={c.careerId} hover sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+                                        <TableCell><Typography sx={{ fontWeight: "bold" }}>{c.name}</Typography></TableCell>
+                                        <TableCell><div dangerouslySetInnerHTML={{ __html: c.description }} /></TableCell>
+                                        <TableCell><img src={`/assets/images/${c.image}`} alt={c.name} width={80} height={50} style={{ objectFit: "cover", borderRadius: "8px" }} /></TableCell>
+                                        <TableCell>
+                                            <IconButton color='primary'><EditOutlined /></IconButton>
+                                            <IconButton color='error'><DeleteOutlined /></IconButton>
+                                            <IconButton color='success'><UpdateOutlined /></IconButton>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Grid>
             </Grid>
-        </Grid>
+        </Container >
     )
 }
 
