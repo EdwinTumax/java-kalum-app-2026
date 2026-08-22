@@ -13,7 +13,7 @@ export const Dashboard: React.FC = () => {
     const [careers, setCareers] = useState<TechynicalCareer[]>([]);
 
     //Async & await
-    const loadCareers = async (): Promise<void> => {
+    /*const loadCareers = async (): Promise<void> => {
         try {
             const response = await getTechnicalCareerService();
             setCareers(response);
@@ -26,7 +26,7 @@ export const Dashboard: React.FC = () => {
             });
         }
 
-    }
+    }*/
 
     //Promesas
     /*const loadCareers = (): Promise<void> => {
@@ -41,6 +41,25 @@ export const Dashboard: React.FC = () => {
             });
         });
     }*/
+
+    const loadCareers = (): Promise<void> => {
+        /*const response = await fetch('https://swapi.dev/api/people');
+        const data = await response.json();
+        console.log(data.results);
+        return data;*/
+
+        return fetch('https://swapi.dev/api/people').then((response) => {
+            response.json().then((data) => {
+                console.log(data.results);
+                return data;
+            }).catch(error => {
+                console.log(error);
+            });
+        }).catch(error => {
+            console.log(error);
+        });
+    } 
+
 
 
     useEffect(() => {
