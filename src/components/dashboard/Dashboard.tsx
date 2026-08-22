@@ -1,4 +1,4 @@
-import { DeleteOutlined, EditOutlined, SearchOutlined, UpdateOutlined } from '@mui/icons-material'
+import { DeleteOutlined, EditOutlined, EditSquare, SearchOutlined, UpdateOutlined } from '@mui/icons-material'
 import { Button, Container, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { ImageGallery } from './ImageGallery'
@@ -12,24 +12,7 @@ export const Dashboard: React.FC = () => {
 
     const [careers, setCareers] = useState<TechynicalCareer[]>([]);
 
-    //Async & await
-    /*const loadCareers = async (): Promise<void> => {
-        try {
-            const response = await getTechnicalCareerService();
-            setCareers(response);
-        } catch (error) {
-            Swal.fire({
-                icon: "error",
-                title: "Carreras Técnicas",
-                text: `${error}`,
-                footer: "<a href=\"#\">Why do I have this issue?</a>"
-            });
-        }
-
-    }*/
-
-    //Promesas
-    /*const loadCareers = (): Promise<void> => {
+    const loadCareers = (): Promise<void> => {
         return getTechnicalCareerService().then((response) => {
             setCareers(response);
         }).catch(error => {
@@ -40,26 +23,7 @@ export const Dashboard: React.FC = () => {
                 footer: "<a href=\"#\">Why do I have this issue?</a>"
             });
         });
-    }*/
-
-    const loadCareers = (): Promise<void> => {
-        /*const response = await fetch('https://swapi.dev/api/people');
-        const data = await response.json();
-        console.log(data.results);
-        return data;*/
-
-        return fetch('https://swapi.dev/api/people').then((response) => {
-            response.json().then((data) => {
-                console.log(data.results);
-                return data;
-            }).catch(error => {
-                console.log(error);
-            });
-        }).catch(error => {
-            console.log(error);
-        });
-    } 
-
+    }
 
 
     useEffect(() => {
@@ -101,6 +65,7 @@ export const Dashboard: React.FC = () => {
                                             <IconButton color='primary'><EditOutlined /></IconButton>
                                             <IconButton color='error'><DeleteOutlined /></IconButton>
                                             <IconButton color='success'><UpdateOutlined /></IconButton>
+                                            <IconButton color='warning'><EditSquare></EditSquare></IconButton>
                                         </TableCell>
                                     </TableRow>
                                 ))}
