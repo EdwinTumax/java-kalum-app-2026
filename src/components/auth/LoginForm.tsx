@@ -22,10 +22,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
                 icon: 'success'
             }).then(result => {
                 if(result.isConfirmed) {
+                    onLoginSuccess();
                     window.location.href = '/dashboard'
                 }
             });
         } else {
+            setError('Error en las credendiales, favor de validar');
             Swal.fire({
                 title: 'Login Failed',
                 text: 'Error en las credendiales, favor de validar',
@@ -36,6 +38,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
                 }
             });
         }
+    }
+
+    const onRegister = () => {
+        window.location.href = '/register'
     }
 
 
@@ -50,6 +56,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
                 {error && <Alert severity='error' sx={{mt: 2}} >{error}</Alert>}
                 <Box sx={{mt:2}}>
                     <Button type='submit' variant='contained' fullWidth>Login</Button>
+                    <Button type='submit' variant='contained' fullWidth onClick={onRegister}>¿No tienes una cuenta?, crea una aqui</Button>
                 </Box>
             </form>
         </Container>

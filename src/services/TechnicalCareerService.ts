@@ -1,7 +1,7 @@
 import type { TechynicalCareer } from "../interfaces/TechnicalCareer";
 
 export const getTechnicalCareerService = (): Promise<TechynicalCareer[]> => {
-    return new Promise((resolve,reject) => {
+    return new Promise((resolve) => {
         console.log('Consultada data Careers');
         setTimeout(() => {
             const careers: TechynicalCareer[] = [

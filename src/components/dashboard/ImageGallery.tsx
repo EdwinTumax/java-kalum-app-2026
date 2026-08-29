@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import React from 'react'
-import logotipo from '../../../public/assets/images/logotipo.png';
+import logotipo from '../../../src/assets/images/logotipo.png';
 
 export const ImageGallery: React.FC = () => {
   return (

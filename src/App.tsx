@@ -1,4 +1,4 @@
-import { use, useState } from 'react'
+import { useState } from 'react'
 import './App.css'
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import { CssBaseline } from '@mui/material'
@@ -6,6 +6,7 @@ import { Dashboard } from './components/dashboard/Dashboard'
 import { AppBarMenu } from './layout/AppBarMenu'
 import { SideNav } from './layout/SideNav'
 import { LoginForm } from './components/auth/LoginForm'
+import { RegisterForm } from './components/auth/RegisterForm'
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
     <SideNav open={drawerOpen} onClose={handlerDrawerToggle}/>    
     <Routes>
       <Route path='/login' element={<LoginForm onLoginSuccess={() => window.location.hash='/dashboard'} />}/>
+      <Route path='/register' element={<RegisterForm />}/>
       <Route path='/dashboard' element={<Dashboard/>}/>
       <Route path='/' element={<Navigate to="/dashboard"/>}/>  
     </Routes>

@@ -6,8 +6,6 @@ import SecurityIcon from '@mui/icons-material/Security';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { PermContactCalendar } from '@mui/icons-material';
 
-import React, { useState } from 'react'
-
 interface SideNavProps {
     open: boolean;
     onClose: () => void;
