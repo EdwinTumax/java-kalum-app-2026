@@ -6,10 +6,11 @@ import React from 'react'
 interface AppBarMenuProps {
     onMenuClick: () => void;
     onLogin?: () => void;
+    onLogout?: () => void;
 }
 
 
-export const AppBarMenu: React.FC<AppBarMenuProps> = ({ onMenuClick, onLogin }) => {
+export const AppBarMenu: React.FC<AppBarMenuProps> = ({ onMenuClick, onLogin, onLogout }) => {
     return (
         <AppBar position='sticky'>
             <Toolbar>
@@ -25,7 +26,7 @@ export const AppBarMenu: React.FC<AppBarMenuProps> = ({ onMenuClick, onLogin }) 
                     </IconButton>
                 </Tooltip>
                 <Tooltip title='Cerrar Sesion'>
-                    <IconButton color='inherit'>
+                    <IconButton color='inherit' onClick={onLogout}>
                         <Logout />
                     </IconButton>
                 </Tooltip>
