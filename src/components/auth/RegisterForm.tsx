@@ -1,8 +1,12 @@
 import { Alert, Box, Button, Container, TextField, Typography } from '@mui/material'
+import SaveIcon from '@mui/icons-material/Save'
+import CancelIcon from '@mui/icons-material/Cancel'
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
 export const RegisterForm = () => {
+    const navigate = useNavigate();
     const [lastname, setLastname] = useState('');
     const [firstname, setFirstname] = useState('');
     const [username, setUsername] = useState('');
@@ -52,14 +56,14 @@ export const RegisterForm = () => {
             icon: 'success'
         }).then(result => {
             if (result.isConfirmed) {
-                window.location.href = '/dashboard';
+                navigate('/dashboard');
             }
         })
 
     }
 
     const handlerOnCancel = () => {
-        window.location.href = '/dashboard';
+        navigate('/dashboard');
     }
 
     return (
@@ -74,9 +78,9 @@ export const RegisterForm = () => {
                 <TextField label="password" type='password' fullWidth margin='normal' value={password} onChange={(e) => setPassword(e.target.value)} />
                 <TextField label="email" fullWidth margin='normal' value={email} onChange={(e) => setEmail(e.target.value)} />
                 {error && <Alert severity='error' sx={{ mt: 2 }} >{error}</Alert>}
-                <Box sx={{ mt: 2 }}>
-                    <Button type='submit' variant='contained' fullWidth>Save</Button>
-                    <Button variant='contained' fullWidth onClick={handlerOnCancel}>Cancel</Button>
+                <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center', gap: 2 }}>
+                    <Button type='submit' variant='contained' startIcon={<SaveIcon />} sx={{minWidth: 140}}>Save</Button>
+                    <Button type='button' variant='outlined' startIcon={<CancelIcon/>} sx={{minWidth: 140}} onClick={handlerOnCancel}>Cancel</Button>
                 </Box>
             </form>
         </Container>

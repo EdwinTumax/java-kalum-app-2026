@@ -1,5 +1,4 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import Swal from "sweetalert2";
 
 interface JWTPayload { 
     sub: string; 
@@ -46,6 +45,10 @@ const authSlice = createSlice({
             localStorage.setItem('token', action.payload.data.token);
             localStorage.setItem('user', JSON.stringify(state.user));
         },
+        loginError(state, action: PayloadAction<string>) {
+            state.loading = false;
+            state.error = action.payload;
+        },
         logout(state) {
             state.user = null;
             state.token = null;
@@ -55,18 +58,6 @@ const authSlice = createSlice({
         }
     }
 });
-
-/*const decodeJWT = (token:string) => {
-    try {
-        const payloadBase64 = token.split('.')[1];
-        const base64 = payloadBase64.replace(/-/g, '+').replace(/_/g, '/');
-        const json = decodeURIComponent(atob(base64).split("").map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join(""));
-        return JSON.parse(json);
-    }catch(error: any) {
-        console.error(error);
-        return null;
-    }
-}*/
 
 const decodeJWT = (token: string): JWTPayload | null => { 
     try { 
@@ -80,6 +71,6 @@ const decodeJWT = (token: string): JWTPayload | null => {
     } 
 };
 
-export const { loginStart, loginSuccess, logout } = authSlice.actions;
+export const { loginStart, loginSuccess, logout, loginError } = authSlice.actions;
 
 export default authSlice.reducer;

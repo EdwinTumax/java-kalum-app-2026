@@ -2,6 +2,7 @@ import { AppBar, IconButton, Toolbar, Tooltip, Typography } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu';
 import { AccountCircle, Logout } from '@mui/icons-material'
 import React from 'react'
+import { useAuth } from '../hooks/useAuth';
 
 interface AppBarMenuProps {
     onMenuClick: () => void;
@@ -11,6 +12,9 @@ interface AppBarMenuProps {
 
 
 export const AppBarMenu: React.FC<AppBarMenuProps> = ({ onMenuClick, onLogin, onLogout }) => {
+
+    const { isAuthenticated, user } = useAuth();
+
     return (
         <AppBar position='sticky'>
             <Toolbar>
@@ -20,16 +24,26 @@ export const AppBarMenu: React.FC<AppBarMenuProps> = ({ onMenuClick, onLogin, on
                 <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
                     Kalum App
                 </Typography>
-                <Tooltip title='Login'>
-                    <IconButton color='inherit' onClick={onLogin}>
-                        <AccountCircle />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title='Cerrar Sesion'>
-                    <IconButton color='inherit' onClick={onLogout}>
-                        <Logout />
-                    </IconButton>
-                </Tooltip>
+
+                {isAuthenticated ?
+                    (
+                        <>
+                            <Typography variant='h6' sx={{ fontWeight: "bold" }}>
+                                Hola, {user?.user}
+                            </Typography>
+                            <Tooltip title='Cerrar Sesion'>
+                                <IconButton color='inherit' onClick={onLogout}>
+                                    <Logout />
+                                </IconButton>
+                            </Tooltip>
+                        </>) :
+                    (
+                        <Tooltip title='Login'>
+                            <IconButton color='inherit' onClick={onLogin}>
+                                <AccountCircle />
+                            </IconButton>
+                        </Tooltip>
+                    )}
             </Toolbar>
         </AppBar>
     )

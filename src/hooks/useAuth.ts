@@ -1,5 +1,5 @@
 import { authService } from "../services/authService";
-import { loginStart, loginSuccess, logout } from "../store/slices/auth/authSlice";
+import { loginError, loginStart, loginSuccess, logout } from "../store/slices/auth/authSlice";
 import type { AppDispatch, RootState } from "../store/store"
 import { useDispatch, useSelector } from "react-redux"
 
@@ -11,10 +11,18 @@ export const useAuth = () => {
         dispatch(loginStart());
         try {
             const data = await authService.login(username,password);
-            dispatch(loginSuccess(data));
+            if(data.success) {
+                dispatch(loginSuccess(data));
+            } else {
+                const message = data.errors?.[0] ?? data.message ?? 'Credenciales incorrectas';
+                dispatch(loginError(message));
+            }
             return data;
         }catch(error: any) {
-            console.log(error);
+            const apiError = error.response.data;
+            const message = apiError?.errors?.[0] ?? apiError?.message ?? 'Error al comunicarse con el servicio'
+            dispatch(loginError(message));
+            throw error;
         }
     }
 

@@ -2,6 +2,8 @@ import { Box, Button, Container, TextField, Typography } from '@mui/material'
 import React, { useState } from 'react'
 import Swal from 'sweetalert2';
 import { useAuth } from '../../hooks/useAuth';
+import { useNavigate, Link } from 'react-router-dom';
+
 
 interface LoginFormProps {
     onLoginSuccess: () => void;
@@ -10,7 +12,8 @@ interface LoginFormProps {
 export const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
     const [username, setUsername] = useState('etumax2');
     const [password, setPassword] = useState('Inicio.2026');
-    const { login } = useAuth();
+    const { login, loading } = useAuth();
+    const navigate = useNavigate();
 
     const handledSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -23,7 +26,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
                 }).then(result => {
                     if (result.isConfirmed) {
                         onLoginSuccess();
-                        window.location.href = '/dashboard'
+                        navigate('/dashboard');
                     }
                 });
             }
@@ -35,14 +38,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
                 icon: 'error'
             }).then(result => {
                 if (result.isConfirmed) {
-                    window.location.href = '/login'
+                    navigate('/login');
                 }
             });
         });
     }
 
     const onRegister = () => {
-        window.location.href = '/register'
+        navigate('/register');
     }
 
     return (
@@ -54,40 +57,18 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
                 <TextField label="username" fullWidth margin='normal' value={username} onChange={(e) => setUsername(e.target.value)} />
                 <TextField label="password" type='password' fullWidth margin='normal' value={password} onChange={(e) => setPassword(e.target.value)} />
                 <Box sx={{ mt: 2 }}>
-                    <Button type='submit' variant='contained' fullWidth>Login</Button>
-                    <Button type='submit' variant='contained' fullWidth onClick={onRegister}>¿No tienes una cuenta?, crea una aqui</Button>
+                    <Button type='submit' variant='contained' disabled={loading} fullWidth>{loading ? 'Iniciando sesión...' : 'Iniciar sesion'}</Button>
+                    <Link to="/register" style={{
+                        display: 'block',
+                        marginTop: '16px',
+                        textAlign: 'center',
+                        textDecoration: 'none'
+                    }}>
+                        ¿No tienes una cuenta? Crea una aquí.
+                    </Link>
                 </Box>
             </form>
         </Container>
 
     )
 }
-
-
-/* 
-try {
-                if (response.success) {
-                    Swal.fire({
-                        title: 'Login Form',
-                        text: `Bienvenido ¡${username}! al sistema Kalum App`,
-                        icon: 'success'
-                    }).then(result => {
-                        if (result.isConfirmed) {
-                            onLoginSuccess();
-                            window.location.href = '/dashboard'
-                        }
-                    });
-                }
-            } catch (errorResponse: any) {
-                Swal.fire({
-                    title: 'Login Failed',
-                    text: `${errorResponse.response?.data?.message}`,
-                    icon: 'error'
-                }).then(result => {
-                    if (result.isConfirmed) {
-                        window.location.href = '/login'
-                    }
-                });
-            });
-
-*/

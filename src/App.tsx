@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './App.css'
-import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom'
+import { Navigate, Route, BrowserRouter as Router, Routes, useNavigate } from 'react-router-dom'
 import { CssBaseline } from '@mui/material'
 import { Dashboard } from './components/dashboard/Dashboard'
 import { AppBarMenu } from './layout/AppBarMenu'
@@ -11,13 +11,12 @@ import Swal from 'sweetalert2'
 import { useAuth } from './hooks/useAuth'
 
 function App() {
-
   const [drawerOpen, setDrawerOpen] = useState(false);
   const handlerDrawerToggle = () => setDrawerOpen(!drawerOpen);
   const { logout } = useAuth();
 
   const handlerOnLogin = () => {
-    window.location.href='/login'
+    window.location.href = '/login';
   }
 
   const handlerLogout = () => {
