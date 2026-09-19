@@ -6,6 +6,7 @@ import SecurityIcon from '@mui/icons-material/Security';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { PermContactCalendar } from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 interface SideNavProps {
     open: boolean;
@@ -21,6 +22,8 @@ interface MenuItem {
 }
 
 export const SideNav: React.FC<SideNavProps> = ({ open, onClose }) => {
+
+    const navigate = useNavigate();
 
     const { isAuthenticated } = useAuth();
 
@@ -65,13 +68,19 @@ export const SideNav: React.FC<SideNavProps> = ({ open, onClose }) => {
         },
     ]
 
+    const handleNavigate = (path: string) => {
+        navigate(path);
+        onClose();
+    }
+
+
     return (
         <Drawer anchor='left' open={open} onClose={onClose} sx={{ '& .MuiDrawer-paper': { top: '64px', height: 'calc(100% - 64px)' } }} ModalProps={{ keepMounted: true }} >
             <List sx={{ width: drawerWidth }}>
                 {
                     menuItem.filter(item => !item.authenticated || isAuthenticated)
                     .map((item, index) => (
-                        <ListItemButton key={index}>
+                        <ListItemButton key={index} onClick={() => handleNavigate(item.path)}>
                             <ListItemIcon>{item.icon}</ListItemIcon>
                             <ListItemText primary={item.text} />
                         </ListItemButton>
