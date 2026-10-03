@@ -10,6 +10,7 @@ import { RegisterForm } from './components/auth/RegisterForm'
 import Swal from 'sweetalert2'
 import { useAuth } from './hooks/useAuth'
 import { UserList } from './components/user/UserList'
+import { RoleList } from './components/role/RoleList'
 
 function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -48,6 +49,7 @@ function App() {
       <Route path='/register' element={<RegisterForm />}/>
       <Route path='/dashboard' element={<Dashboard/>}/>
       <Route path='/users' element={<UserList/>} />
+      <Route path='/roles' element={<RoleList/>} />
       <Route path='/' element={<Navigate to="/dashboard"/>}/>  
     </Routes>
    </Router>
