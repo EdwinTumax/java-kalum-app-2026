@@ -1,13 +1,17 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useUser } from '../../hooks/useUser'
 import { CircularProgress, Alert, Typography, Container, Grid, Button, TextField, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton } from '@mui/material';
 import { ImageGallery } from '../dashboard/ImageGallery';
-import { DeleteOutlined, EditOutlined, EditSquare, SearchOutlined, UpdateOutlined } from '@mui/icons-material';
+import { AddOutlined, DeleteOutlined, EditOutlined, EditSquare, SearchOutlined, UpdateOutlined } from '@mui/icons-material';
 import type { User } from '../../interfaces/user/User';
+import { UserModal } from './UserModal';
 
 export const UserList: React.FC = () => {
 
-    const { users, loading, error, getUsers } = useUser();
+    const { users, loading, error, getUsers, clearUserError } = useUser();
+
+    const [openModal,setOpenModal] = useState(false);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
     useEffect(() => {
         getUsers();
@@ -25,15 +29,27 @@ export const UserList: React.FC = () => {
         )
     }
 
+    const handleOpenCreate = () => {
+        clearUserError();
+        setSelectedUser(null);
+        setOpenModal(true);
+    }
+
+    const handleClose = () => {
+        setOpenModal(false);
+        setSelectedUser(null);
+    }
+
     return (
         <Container maxWidth="xl">
             <Grid container spacing={2}>
                 <Grid size={12} sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <ImageGallery />
                     <Typography variant='h4' sx={{ fontWeight: "bold" }}>Gestion de Usuarios</Typography>
-                    <Button variant='contained' color='primary' startIcon={<SearchOutlined />} >
-                        Buscar
+                    <Button variant='contained' startIcon={<AddOutlined/>} onClick={handleOpenCreate} sx={{borderRadius: 2, px: 3, py: 1.2, textTransform: 'none', fontWeight: 700, boxShadow: 'none'}}>
+                        Agregar
                     </Button>
+
                 </Grid>
                 <Grid size={12}>
                     <TextField type='text' variant='outlined' fullWidth placeholder='Ingrese carrera técnica' label='Buscar carrera' />
@@ -77,6 +93,7 @@ export const UserList: React.FC = () => {
                     </TableContainer>
                 </Grid>
             </Grid>
+            <UserModal open={openModal} onClose={handleClose} user={selectedUser}></UserModal>
         </Container >
     )
 }
