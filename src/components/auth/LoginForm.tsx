@@ -10,7 +10,7 @@ interface LoginFormProps {
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
-    const [username, setUsername] = useState('etumax2');
+    const [username, setUsername] = useState('etumax');
     const [password, setPassword] = useState('Inicio.2026');
     const { login, loading } = useAuth();
     const navigate = useNavigate();

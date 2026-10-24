@@ -31,14 +31,12 @@ export const userService = {
         return response.data;
     },
 
-    updateUser: async (userId: string, user: UpdateUserRequest): Promise<UpdateUserResponse> => {
-        const response = await api.put(`/user/${userId}`, user);
-        return response.data;
+    updateUser: async (userId: string, user: UpdateUserRequest): Promise<void> => {
+        await api.put<void>(`/users/${userId}`, user);
     },
 
-    deleteUser: async (userId: string) : Promise<DeleteUserResponse> => {
-        const response = await api.delete(`/user/${userId}`);
-        return response.data;
+    deleteUser: async (userId: string) : Promise<void> => {
+        await api.delete<void>(`/users/${userId}`);
     }
     
 }

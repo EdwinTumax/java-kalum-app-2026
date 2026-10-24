@@ -102,23 +102,14 @@ export const UserModal = ({ open, onClose, user = null }: UserModalProps) => {
                     roles: form.roles,
                     ...(form.password ? { password: form.password} : {})
                 };
-                
-                const response = await updateUser(user.userId, updatePayload);
-                
-                if(!response.success) {
-                    setFormError(response.errors?.[0] ?? response.message ?? 'No se pudo actualizar el usuario');
-                    return;
-                }
 
-                if(!response.data) {
-                    setFormError('El servidor no deolvió el usuario actaulziado. Verifica la respuesta de la Api.');
-                    return;
-                }
+                await updateUser(user.userId, updatePayload);
 
                 await Swal.fire({
                     icon: 'success',
                     title: 'Usuario actualizado',
-                    text: response.message || 'Los cambios se guardaron correctamente.'
+                    text: 'Los cambios se guardaron correctamente.',
+                    confirmButtonText: 'Aceptar'
                 });
 
                 onClose();

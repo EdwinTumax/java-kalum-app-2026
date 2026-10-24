@@ -1,6 +1,7 @@
 import { ApiException } from "../core/exceptions/ApiException";
 import type { CreateUserRequest } from "../interfaces/user/CreateUserRequest";
 import type { UpdateUserRequest } from "../interfaces/user/UpdateUserRequest";
+import type { User } from "../interfaces/user/User";
 import { userService } from "../services/userService";
 import { clearUserError, createUserError, createUserStart, createUserSuccess, deleteUserError, deleteUserStart, deleteUserSuccess, getUsersError, getUsersStart, getUsersSuccess, updateUserError, updateUserStart, updateUserSuccess } from "../store/slices/user/userSlice";
 import type { AppDispatch, RootState } from "../store/store";
@@ -53,17 +54,11 @@ export const useUser = () => {
         }        
     }
 
-    const updateUser = async(userId: string, user: UpdateUserRequest) => {
+    const updateUser = async(userId: string, userData: UpdateUserRequest) => {
         dispatch(updateUserStart());
         try {
-            const response = await userService.updateUser(userId, user);
-            if(response.success && response.data) {
-                dispatch(updateUserSuccess(response.data));
-            } else {
-                const message = response.errors?.[0] ?? response.message ?? 'Error al actualizar el usuario';
-                dispatch(updateUserError(message));
-            }
-            return response;
+            await userService.updateUser(userId, userData);
+            dispatch(updateUserSuccess({userId, user: userData}));
         } catch(error: any) {
             const message = getErrorMessage(error, 'Error al actualizar el usuario');
             dispatch(updateUserError(message));
@@ -74,14 +69,8 @@ export const useUser = () => {
     const deleteUser = async (userId: string) => {
         dispatch(deleteUserStart());
         try {
-            const response = await userService.deleteUser(userId);
-            if(response.success) {
-                dispatch(deleteUserSuccess(userId));
-            } else {
-                const message = response.errors?.[0] ?? response.message ?? 'Error al eliminar usuario';
-                dispatch(deleteUserError(message));
-            }
-            return response;
+            await userService.deleteUser(userId);            
+            dispatch(deleteUserSuccess(userId));
         } catch(error: any) {
             const message = getErrorMessage(error,'Error al eliminar el usuario');
             dispatch(deleteUserError(message));

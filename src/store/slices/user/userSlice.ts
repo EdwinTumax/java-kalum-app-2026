@@ -1,5 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { User } from "../../../interfaces/user/User";
+import type { UpdateUserRequest } from "../../../interfaces/user/UpdateUserRequest";
 
 interface UserState {
     users: User[];
@@ -74,12 +75,15 @@ const userSlice = createSlice({
             state.error = null;
         },
 
-        updateUserSuccess(state, action: PayloadAction<User>) {
-            state.updating = false;
+        updateUserSuccess(state, action: PayloadAction<{userId: string; user: UpdateUserRequest}>) {
             const index = state.users.findIndex(user => user.userId === action.payload.userId);
             if(index !== -1) {
-                state.users[index] = action.payload;
+                state.users[index] = {
+                    ...state.users[index],
+                    ...action.payload.user
+                };
             }
+            state.updating = false;
             state.error = null;
         },
 
@@ -94,8 +98,8 @@ const userSlice = createSlice({
         },
 
         deleteUserSuccess(state, action: PayloadAction<string>) {
-            state.deleting = false;
             state.users = state.users.filter(user => user.userId !== action.payload);
+            state.deleting = false;
             state.error = null;
         },
 
