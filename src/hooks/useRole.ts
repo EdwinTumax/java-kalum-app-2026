@@ -1,7 +1,8 @@
 import { ApiException } from "../core/exceptions/ApiException";
 import type { CreateRoleRequest } from "../interfaces/role/CreateRoleRequest";
+import type { UpdateRoleRequest } from "../interfaces/role/UpdateRoleRequest";
 import { roleService } from "../services/roleService";
-import { clearRoleError, createRoleError, createRoleStart, createRoleSuccess, getRolesError, getRolesStart, getRolesSuccess } from "../store/slices/role/roleSlice";
+import { clearRoleError, createRoleError, createRoleStart, createRoleSuccess, deleteRoleError, deleteRoleStart, deleteRoleSuccess, getRolesError, getRolesStart, getRolesSuccess, udpateRoleError, updateRoleStart, updateRoleSuccess } from "../store/slices/role/roleSlice";
 import type { AppDispatch, RootState } from "../store/store";
 import { useDispatch, useSelector } from "react-redux"
 
@@ -50,7 +51,35 @@ export const useRole = () => {
         }
     }
 
-    
+    const updateRole = async(roleId: string, roleData: UpdateRoleRequest) => {
+        dispatch(updateRoleStart());
+        try {
+            await roleService.updateRole(roleId, roleData);
+            dispatch(updateRoleSuccess({roleId,role: roleData}));
+        } catch(error: any) {
+            const message = getErrorMessage(error,'Error al actualizar el role');
+            dispatch(udpateRoleError(message));
+            throw new ApiException(message, error.response?.status, error.response?.data?.errors);
+        }
+    }
 
-    return { roles, loading, error, getRoles, createRole, creating, clearRoleError }
+    const deleteRole = async(roleId: string) => {
+        dispatch(deleteRoleStart());
+        try {   
+            await roleService.deleteRole(roleId);
+            dispatch(deleteRoleSuccess(roleId));
+        }catch(error: any) {
+            const message = getErrorMessage(error, 'Error al eliminar el role');
+            dispatch(deleteRoleError(message));
+            throw new ApiException(message, error.response?.status, error.response?.data?.errors);
+        }
+    }
+
+
+    return { roles, loading, error, getRoles, createRole, updateRole, deleteRole, creating, clearRoleError }
+}
+
+const getErrorMessage = (error: any, fallback: string) : string => {
+    const apiError = error?.response?.data;
+    return apiError?.errors?.[0] ?? apiError?.message ?? error?.message ?? fallback;
 }

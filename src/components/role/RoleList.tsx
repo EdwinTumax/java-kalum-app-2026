@@ -20,16 +20,6 @@ export const RoleList = () => {
         return <CircularProgress />
     }
 
-
-
-    /*if (error) {
-        return (
-            <Alert severity='error'>
-                {error}
-            </Alert>
-        )
-    }*/
-
     const handlerOpenModal = () => {
         setOpenModal(true);
     }
