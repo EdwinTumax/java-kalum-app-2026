@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 
 export const useRole = () => {
-    const { roles, loading, error, creating } = useSelector((state: RootState) => state.role);
+    const { roles, loading, creating, updating, deleting,  error } = useSelector((state: RootState) => state.role);
 
     const dispatch = useDispatch<AppDispatch>();
 
@@ -75,8 +75,22 @@ export const useRole = () => {
         }
     }
 
+    const clearRoleErrorHandle = () => {
+        dispatch(clearRoleError());
+    }
 
-    return { roles, loading, error, getRoles, createRole, updateRole, deleteRole, creating, clearRoleError }
+    return { 
+        roles, 
+        loading,
+        creating,
+        updating,
+        deleting,
+        error, 
+        getRoles, 
+        createRole, 
+        updateRole, 
+        deleteRole, 
+        clearRoleError: clearRoleErrorHandle }
 }
 
 const getErrorMessage = (error: any, fallback: string) : string => {
