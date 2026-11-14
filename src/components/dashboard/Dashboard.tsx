@@ -34,6 +34,7 @@ import Swal from 'sweetalert2';
 
 import type { TechynicalCareer } from '../../interfaces/TechnicalCareer';
 import { getTechnicalCareerService } from '../../services/TechnicalCareerService';
+import type { CarreraTecnica } from '../../interfaces/career/CarreraTecnica';
 
 
 export const Dashboard: React.FC = () => {
@@ -45,12 +46,19 @@ export const Dashboard: React.FC = () => {
 
         setLoading(true);
 
-        return getTechnicalCareerService()
-            .then((response) => {
-                setCareers(response);
+        return getTechnicalCareerService.getCareers()
+            .then((response: CarreraTecnica[]) => {
+                const careers: TechynicalCareer[] = response.map(career => ({
+                    careerId: career.carreraId,
+                    name: career.nombre,
+                    description: career.descripcion,
+                    subTitle: career.subTitulo,
+                    image: career.imagen
+                }));
+                setCareers(careers);
             })
             .catch(error => {
-
+                console.log(error);
                 Swal.fire({
                     icon: 'error',
                     title: 'Carreras Técnicas',
@@ -69,51 +77,38 @@ export const Dashboard: React.FC = () => {
     }, []);
 
     const filteredCareers = useMemo(() => {
-
         const value = search.trim().toLowerCase();
-
         if (!value) {
             return careers;
         }
-
         return careers.filter((career) =>
             career.name.toLowerCase().includes(value)
         );
-
     }, [careers, search]);
 
-
     const totalCareers = careers.length;
-
     const careersWithImage = careers.filter(
         career => career.image
     ).length;
 
     const careersWithoutImage = totalCareers - careersWithImage;
 
-
     const handleDetail = (career: TechynicalCareer) => {
-
         console.log('Detalle:', career);
     };
 
 
     const handleAssign = (career: TechynicalCareer) => {
-
         console.log('Asignar:', career);
-
-    
     };
 
 
     const handleNewCareer = () => {
         console.log('Nueva carrera');
-
     };
 
 
     return (
-
         <Container
             maxWidth="xl"
             sx={{
