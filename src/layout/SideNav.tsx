@@ -39,7 +39,7 @@ export const SideNav: React.FC<SideNavProps> = ({ open, onClose }) => {
         {
             text: 'Carreras Técnicas',
             icon: <SchoolIcon />,
-            path: '/carreras',
+            path: '/technicalCareers',
             authenticated: false
         },
         {

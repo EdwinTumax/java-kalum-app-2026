@@ -6,3 +6,17 @@
 .swal2-container {
     z-index: 9999 !important;
 }
+
+.text-color-kalum {
+    display: inline-block;
+    background-color: #e3f2fd;
+    color: #1565c0;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    margin: 0 3px;
+    vertical-align: middle;
+    white-space: nowrap;
+}

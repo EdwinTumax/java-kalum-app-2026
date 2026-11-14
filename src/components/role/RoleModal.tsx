@@ -40,7 +40,6 @@ export const RoleModal = ({ open, onClose, role = null }: RoleModalProps) => {
                 setForm({
                     name: role.name
                 });
-                console.log(form);
             }
         } else {
             setForm(initialForm);
