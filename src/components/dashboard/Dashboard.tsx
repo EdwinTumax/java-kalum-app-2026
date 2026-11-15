@@ -33,8 +33,7 @@ import {
 import Swal from 'sweetalert2';
 
 import type { TechynicalCareer } from '../../interfaces/TechnicalCareer';
-import { getTechnicalCareerService } from '../../services/TechnicalCareerService';
-import type { CarreraTecnica } from '../../interfaces/career/CarreraTecnica';
+import { technicalCareerService } from '../../services/TechnicalCareerService';
 
 
 export const Dashboard: React.FC = () => {
@@ -46,16 +45,9 @@ export const Dashboard: React.FC = () => {
 
         setLoading(true);
 
-        return getTechnicalCareerService.getCareers()
-            .then((response: CarreraTecnica[]) => {
-                const careers: TechynicalCareer[] = response.map(career => ({
-                    careerId: career.carreraId,
-                    name: career.nombre,
-                    description: career.descripcion,
-                    subTitle: career.subTitulo,
-                    image: career.imagen
-                }));
-                setCareers(careers);
+        return technicalCareerService.getTechnicalCareers()
+            .then((response: any) => {
+                setCareers(response.data);
             })
             .catch(error => {
                 console.log(error);
