@@ -3,13 +3,15 @@ import authReducer from './slices/auth/authSlice';
 import userReducer from './slices/user/userSlice';
 import roleReducer from './slices/role/roleSlice';
 import technicalCareerReducer from './slices/technicalCareer/technicalCareerSlice';
+import admissionExamReducer from './slices/admissionExam/admissionExamSlice';
 
 export const store = configureStore({
     reducer: {
         auth: authReducer,
         user: userReducer,
         role: roleReducer,
-        technicalCareer: technicalCareerReducer
+        technicalCareer: technicalCareerReducer,
+        admissionExam: admissionExamReducer,
     }
 })
 

@@ -57,7 +57,7 @@ export const SideNav: React.FC<SideNavProps> = ({ open, onClose }) => {
         {
             text: 'Examenes Admisión',
             icon: <CalendarMonthIcon />,
-            path: '/examenes-admision',
+            path: '/admissionExams',
             authenticated: false
         },
         {

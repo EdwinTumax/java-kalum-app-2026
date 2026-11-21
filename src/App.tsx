@@ -12,6 +12,7 @@ import { useAuth } from './hooks/useAuth'
 import { UserList } from './components/user/UserList'
 import { RoleList } from './components/role/RoleList'
 import { TechnicalCareerList } from './components/technicalCareer/TechnicalCareerList'
+import { AdmissionExamList } from './components/admissionExam/AdmissionExamList'
 
 function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -52,6 +53,7 @@ function App() {
       <Route path='/users' element={<UserList/>} />
       <Route path='/roles' element={<RoleList/>} />
       <Route path='/technicalCareers' element={<TechnicalCareerList/>}/>
+      <Route path='/admissionExams' element={<AdmissionExamList/>} />
       <Route path='/' element={<Navigate to="/dashboard"/>}/>  
     </Routes>
    </Router>
