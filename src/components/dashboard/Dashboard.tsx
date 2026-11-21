@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { ACADEMIC_SERVER_URL } from '../../services/kalumAcademicManagmentApi';
 
 import {
     AddOutlined,
@@ -593,73 +594,119 @@ export const Dashboard: React.FC = () => {
                                     }
                                 }}
                             >
-
-                                <CardMedia
-                                    component="img"
-                                    height="180"
-                                    image={
-                                        career.image
-                                            ? `/assets/images/${career.image}`
-                                            : '/assets/images/default-career.jpg'
-                                    }
-                                    alt={career.name}
+                                <Card
+                                    elevation={0}
                                     sx={{
-                                        objectFit: 'cover'
-                                    }}
-                                />
+                                        height: '100%',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        borderRadius: 3,
+                                        border: '1px solid',
+                                        borderColor: 'divider',
+                                        overflow: 'hidden',
+                                        transition: 'all 0.25s ease',
 
-                                <CardContent
-                                    sx={{
-                                        flexGrow: 1,
-                                        p: 2.5
+                                        '&:hover': {
+                                            transform: 'translateY(-5px)',
+                                            boxShadow: '0 10px 30px rgba(0,0,0,0.10)',
+                                            borderColor: 'primary.light'
+                                        }
                                     }}
                                 >
-
-                                    <Chip
-                                        label="Carrera Técnica"
-                                        size="small"
-                                        sx={{
-                                            mb: 1.5,
-                                            fontWeight: 600,
-                                            color: 'primary.main',
-                                            backgroundColor: '#E8F1FF'
-                                        }}
-                                    />
-
-
-                                    <Typography
-                                        variant="h6"
-                                        sx={{
-                                            fontWeight: 800,
-                                            color: '#102A43',
-                                            lineHeight: 1.25,
-                                            mb: 1
-                                        }}
-                                    >
-                                        {career.name}
-                                    </Typography>
-
-
                                     <Box
                                         sx={{
-                                            color: 'text.secondary',
-                                            fontSize: '0.875rem',
-                                            lineHeight: 1.5,
-                                            display: '-webkit-box',
-                                            WebkitLineClamp: 3,
-                                            WebkitBoxOrient: 'vertical',
+                                            width: '100%',
+                                            aspectRatio: '16 / 9',
                                             overflow: 'hidden',
-
-                                            '& p': {
-                                                margin: 0
+                                            backgroundColor: '#f5f5f5'
+                                        }}
+                                    >
+                                        <CardMedia
+                                            component="img"
+                                            image={
+                                                career.image
+                                                    ? `${ACADEMIC_SERVER_URL}${career.image.startsWith('/') ? '' : '/'}${career.image}`
+                                                    : '/assets/images/default-career.jpg'
                                             }
-                                        }}
-                                        dangerouslySetInnerHTML={{
-                                            __html: career.description
-                                        }}
-                                    />
+                                            alt={career.name}
+                                            sx={{
+                                                width: '100%',
+                                                height: '100%',
+                                                objectFit: 'contain',
+                                                display: 'block'
+                                            }}
+                                        />
+                                    </Box>
 
-                                </CardContent>
+                                    <CardContent
+                                        sx={{
+                                            flexGrow: 1,
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            p: 2.5
+                                        }}
+                                    >
+                                        <Chip
+                                            label="Carrera Técnica"
+                                            size="small"
+                                            sx={{
+                                                mb: 1.5,
+                                                alignSelf: 'flex-start',
+                                                fontWeight: 600,
+                                                color: 'primary.main',
+                                                backgroundColor: '#E8F1FF'
+                                            }}
+                                        />
+
+                                        <Typography
+                                            variant="h6"
+                                            sx={{
+                                                fontWeight: 800,
+                                                color: '#102A43',
+                                                lineHeight: 1.25,
+                                                mb: 1
+                                            }}
+                                        >
+                                            {career.name}
+                                        </Typography>
+
+                                        {/* Descripción */}
+                                        <Box
+                                            sx={{
+                                                color: 'text.secondary',
+                                                fontSize: '0.875rem',
+                                                lineHeight: 1.6,
+
+                                                '& p': {
+                                                    margin: 0,
+                                                    marginBottom: 1
+                                                },
+
+                                                '& ul, & ol': {
+                                                    paddingLeft: 2.5
+                                                }
+                                            }}
+                                            dangerouslySetInnerHTML={{
+                                                __html: career.description
+                                            }}
+                                        />
+
+                                        {/* Subtítulo */}
+                                        {career.subTitle && (
+                                            <Typography
+                                                variant="subtitle2"
+                                                sx={{
+                                                    mt: 2,
+                                                    fontWeight: 700,
+                                                    color: 'primary.main',
+                                                    lineHeight: 1.5
+                                                }}
+                                            >
+                                                {career.subTitle}
+                                            </Typography>
+                                        )}
+                                    </CardContent>
+                                </Card>
 
 
                                 {/* ACCIONES */}

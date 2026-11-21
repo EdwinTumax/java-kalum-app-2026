@@ -2,9 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../store/store";
 import { clearTechnicalCareerError, createTechnicalCareerError, createTechnicalCareerStart, createTechnicalCareerSuccess, deleteTechnicalCareerError, deleteTechnicalCareerStart, deleteTechnicalCareerSuccess, getTechnicalCareersError, getTechnicalCareersStart, getTechnicalCareersSuccess, udpateTechnicalCareerError, updateTechnicalCareerStart, updateTechnicalCareerSuccess } from "../store/slices/technicalCareer/technicalCareerSlice";
 import { technicalCareerService } from "../services/TechnicalCareerService";
-import type { CreateTechnicalCareerRequest } from "../interfaces/career/CreateTechnicalCareerRequest";
 import { ApiException } from "../core/exceptions/ApiException";
-import type { UpdateTechnicalCareerRequest } from "../interfaces/career/UpdateTechnicalCareerRequest";
 
 export const useTechnicalCareer = () => {
     const { technicalCareers, loading, creating, updating, deleting,  error } = useSelector((state: RootState) => state.technicalCareer);
@@ -30,10 +28,10 @@ export const useTechnicalCareer = () => {
         }
     }
 
-    const createTechnicalCareer = async (technicalCareer: CreateTechnicalCareerRequest) => {
+    const createTechnicalCareer = async (formData: FormData) => {
         dispatch(createTechnicalCareerStart());
         try {
-            const response = await technicalCareerService.createTechnicalCareer(technicalCareer);
+            const response = await technicalCareerService.createTechnicalCareer(formData);
             if(response.success && response.data) {
                 dispatch(createTechnicalCareerSuccess(response.data))
             } else {
@@ -49,11 +47,11 @@ export const useTechnicalCareer = () => {
         }
     }
 
-    const updateTechnicalCareer = async(careerId: string, technicalCareerData: UpdateTechnicalCareerRequest) => {
+    const updateTechnicalCareer = async(careerId: string, formData: FormData) => {
         dispatch(updateTechnicalCareerStart());
         try {
-            await technicalCareerService.updateTechnicalCareer(careerId, technicalCareerData);
-            dispatch(updateTechnicalCareerSuccess({careerId,technicalCareer: technicalCareerData}));
+            const response = await technicalCareerService.updateTechnicalCareer(careerId, formData);
+            dispatch(updateTechnicalCareerSuccess({careerId,technicalCareer: response.data}));
         } catch(error: any) {
             const message = getErrorMessage(error,'Error al actualizar el technicalCareer');
             dispatch(udpateTechnicalCareerError(message));

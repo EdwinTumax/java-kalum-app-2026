@@ -1,8 +1,7 @@
-import type { CreateTechnicalCareerRequest } from "../interfaces/career/CreateTechnicalCareerRequest";
 import type { CreateTechnicalCareerResponse } from "../interfaces/career/CreateTechnicalCareerResponse";
 import type { TechnicalCareer } from "../interfaces/career/TechnicalCareer";
 import type { TechnicalCareerResponse } from "../interfaces/career/TechnicalCareerResponse";
-import type { UpdateTechnicalCareerRequest } from "../interfaces/career/UpdateTechnicalCareerRequest";
+import type { UpdateTechnicalCareerResponse } from "../interfaces/career/UpdateTechnicalCareerResponse";
 
 import apiKalumAcademic from './kalumAcademicManagmentApi';
 
@@ -18,13 +17,14 @@ export const technicalCareerService = {
         return response.data;
     },
 
-    createTechnicalCareer: async (technicalCareer: CreateTechnicalCareerRequest): Promise<CreateTechnicalCareerResponse> => {
-        const response = await apiKalumAcademic.post<CreateTechnicalCareerResponse>('/technical-careers', technicalCareer);
+    createTechnicalCareer: async (formData: FormData): Promise<CreateTechnicalCareerResponse> => {
+        const response = await apiKalumAcademic.post<CreateTechnicalCareerResponse>('/technical-careers', formData);
         return response.data;
     },
 
-    updateTechnicalCareer: async (technicalCareerId: string, technicalCareer: UpdateTechnicalCareerRequest): Promise<void> => {
-        await apiKalumAcademic.put<void>(`/technical-careers/${technicalCareerId}`, technicalCareer);
+    updateTechnicalCareer: async (technicalCareerId: string, formData: FormData): Promise<UpdateTechnicalCareerResponse> => {
+        const response = await apiKalumAcademic.put<UpdateTechnicalCareerResponse>(`/technical-careers/${technicalCareerId}`, formData);
+        return response.data;
     },
 
     deleteTechnicalCareer: async (technicalCareerId: string): Promise<void> => {

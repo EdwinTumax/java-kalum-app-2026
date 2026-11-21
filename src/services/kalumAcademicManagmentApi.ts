@@ -1,5 +1,6 @@
 import axios from "axios";
 
+export const ACADEMIC_SERVER_URL = `http://${import.meta.env.VITE_KALUM_API_ACADEMIC_HOST}:${import.meta.env.VITE_KALUM_API_ACADEMIC_PORT}`;
 
 const apiKalumAcademic = axios.create({
     baseURL: `http://${import.meta.env.VITE_KALUM_API_ACADEMIC_HOST}:${import.meta.env.VITE_KALUM_API_ACADEMIC_PORT}/${import.meta.env.VITE_KALUM_API_ACADEMIC_NAME}/${import.meta.env.VITE_KALUM_API_ACADEMIC_VERSION}`

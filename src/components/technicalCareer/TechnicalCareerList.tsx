@@ -5,7 +5,7 @@ import type { TechnicalCareer } from '../../interfaces/career/TechnicalCareer';
 import { clearTechnicalCareerError } from '../../store/slices/technicalCareer/technicalCareerSlice';
 import Swal from 'sweetalert2';
 import { Avatar, Box, Button, Card, CardContent, Chip, CircularProgress, Container, Grid, IconButton, InputAdornment, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip, Typography } from '@mui/material';
-import { AddOutlined, DeleteOutlined, EditOutlined, GroupsOutlined, ManageAccountsOutlined, RefreshOutlined, SearchOutlined, SecurityOutlined, ShieldOutlined, Work } from '@mui/icons-material';
+import { AddOutlined, DeleteOutlined, EditOutlined, GroupsOutlined, ImageOutlined, ManageAccountsOutlined, RefreshOutlined, SchoolOutlined, SearchOutlined, SecurityOutlined, ShieldOutlined, Work } from '@mui/icons-material';
 import { TechnicalCareerModal } from './TechnicalCareerModal';
 
 
@@ -76,7 +76,7 @@ export const TechnicalCareerList = () => {
 
         const result = await Swal.fire({
             title: '¿Eliminar rol?',
-            text: `Se eliminará el rol ${technicalCareer.name}. Esta acción no se puede deshacer.`,
+            text: `Se eliminará la carrera técnica ${technicalCareer.name}. Esta acción no se puede deshacer.`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Sí, eliminar',
@@ -93,17 +93,17 @@ export const TechnicalCareerList = () => {
             await Swal.fire({
                 icon: 'success',
                 title: 'Rol eliminado',
-                text: 'El rol se eliminó correctamente.',
+                text: 'La carrera técnica se eliminó correctamente.',
                 confirmButtonText: 'Aceptar'
             });
 
         } catch (error: unknown) {
             await Swal.fire({
                 icon: 'error',
-                title: 'Error al eliminar el rol',
+                title: 'Error al eliminar la carrera técnica',
                 text: error instanceof Error
                     ? error.message
-                    : 'No fue posible eliminar el rol.',
+                    : 'No fue posible eliminar la carrera técnica.',
                 confirmButtonText: 'Aceptar'
             });
         }
@@ -125,6 +125,13 @@ export const TechnicalCareerList = () => {
 
         return 'default';
     };
+
+    const careersWithImage = useMemo(
+        () => technicalCareers.filter(career => Boolean(career.image)).length,
+        [technicalCareers]
+    );
+
+    const careersWithoutImage = technicalCareers.length - careersWithImage;
 
     // TARJETAS DE RESUMEN
 
@@ -254,14 +261,12 @@ export const TechnicalCareerList = () => {
             </Box>
 
             {/* TARJETAS DE RESUMEN */}
-
             <Grid container spacing={2.5} sx={{ mb: 4 }}>
-
                 <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                     <SummaryCard
-                        title="Total de carreras Técnicas"
+                        title="Total de carreras"
                         value={technicalCareers.length}
-                        subtitle="Carreras técnicas registradas en el sistema"
+                        subtitle="Carreras técnicas registradas"
                         icon={<GroupsOutlined />}
                         color="#1976d2"
                     />
@@ -269,26 +274,24 @@ export const TechnicalCareerList = () => {
 
                 <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                     <SummaryCard
-                        title="Carreras Técnicas administrativas"
-                        value={adminCount}
-                        subtitle="Carreras técnicas con permisos administrativos"
-                        icon={<ShieldOutlined />}
-                        color="#9c27b0"
+                        title="Carreras con imagen"
+                        value={careersWithImage}
+                        subtitle="Carreras con imagen asignada"
+                        icon={<Work />}
+                        color="#2e7d32"
                     />
                 </Grid>
 
                 <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                     <SummaryCard
-                        title="Otros carreras técnicas"
-                        value={otherTechnicalCareers}
-                        subtitle="Carreras Técnicas adicionales del sistema"
-                        icon={<ManageAccountsOutlined />}
-                        color="#2e7d32"
+                        title="Sin imagen"
+                        value={careersWithoutImage}
+                        subtitle="Carreras pendientes de imagen"
+                        icon={<ImageOutlined />}
+                        color="#ed6c02"
                     />
                 </Grid>
-
             </Grid>
-
             {/* LISTADO DE ROLES */}
 
             <Paper
@@ -452,7 +455,7 @@ export const TechnicalCareerList = () => {
                                                         borderRadius: 2
                                                     }}
                                                 >
-                                                    <Work />
+                                                    <SchoolOutlined />
                                                 </Avatar>
 
                                                 <Box>
@@ -478,7 +481,7 @@ export const TechnicalCareerList = () => {
                                         <TableCell>
                                             <Typography
                                                 variant="body2"
-                                                dangerouslySetInnerHTML={{__html: technicalCareer.description}}                                            
+                                                dangerouslySetInnerHTML={{ __html: technicalCareer.description }}
                                                 sx={{ fontWeight: 700 }}
                                             />
                                         </TableCell>

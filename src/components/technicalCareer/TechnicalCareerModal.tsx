@@ -1,16 +1,29 @@
-import React, { useEffect, useState } from 'react'
+
+import React, { useEffect, useState } from 'react';
 import type { TechnicalCareer } from '../../interfaces/career/TechnicalCareer';
 import { useTechnicalCareer } from '../../hooks/useTechnicalCareer';
-import type { UpdateTechnicalCareerRequest } from '../../interfaces/career/UpdateTechnicalCareerRequest';
 import Swal from 'sweetalert2';
-import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
+
+import {
+    Alert,
+    Box,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    TextField,
+    Typography
+} from '@mui/material';
+
 import CancelIcon from '@mui/icons-material/Cancel';
 import SaveIcon from '@mui/icons-material/Save';
+import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 
 interface TechnicalCareerModalProps {
     open: boolean;
     onClose: () => void;
-    technicalCareer: TechnicalCareer | null
+    technicalCareer: TechnicalCareer | null;
 }
 
 interface TechnicalCareerForm {
@@ -18,121 +31,362 @@ interface TechnicalCareerForm {
     description: string;
     subTitle: string;
     image: string;
-
 }
 
 const initialForm: TechnicalCareerForm = {
     name: '',
     description: '',
     subTitle: '',
-    image: 'default.png'
-}
+    image: ''
+};
+
+const ACADEMIC_SERVER_URL = `http://${import.meta.env.VITE_KALUM_API_ACADEMIC_HOST}:${import.meta.env.VITE_KALUM_API_ACADEMIC_PORT}`;
 
 
-export const TechnicalCareerModal = ({ open, onClose, technicalCareer = null }: TechnicalCareerModalProps) => {
-    const { createTechnicalCareer, updateTechnicalCareer, creating, updating, clearTechnicalCareerError } = useTechnicalCareer();
+const getImageUrl = (imagePath: string) => {
+    return `${ACADEMIC_SERVER_URL}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`;
+};
+
+
+export const TechnicalCareerModal = ({
+    open,
+    onClose,
+    technicalCareer
+}: TechnicalCareerModalProps) => {
+
+    const {
+        createTechnicalCareer,
+        updateTechnicalCareer,
+        creating,
+        updating,
+        clearTechnicalCareerError
+    } = useTechnicalCareer();
+
     const [form, setForm] = useState<TechnicalCareerForm>(initialForm);
+    const [selectedImage, setSelectedImage] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [formError, setFormError] = useState<string | null>(null);
+
     const saving = creating || updating;
     const isEditing = Boolean(technicalCareer);
 
-
     useEffect(() => {
-        if (open) {
-            setFormError(null);
-            clearTechnicalCareerError();
-            if (technicalCareer) {
-                setForm({
-                    name: technicalCareer.name,
-                    description: technicalCareer.description,
-                    subTitle: technicalCareer.subTitle,
-                    image: technicalCareer.image ? 'technicalCareer.image' : 'default.png'
-                });
-            }
+        if (!open) {
+            return;
+        }
+
+        setFormError(null);
+        setSelectedImage(null);
+
+        if (technicalCareer) {
+            setForm({
+                name: technicalCareer.name ?? '',
+                description: technicalCareer.description ?? '',
+                subTitle: technicalCareer.subTitle ?? '',
+                image: technicalCareer.image ?? ''
+            });
+
+            setImagePreview(
+                technicalCareer.image
+                    ? getImageUrl(technicalCareer.image)
+                    : null
+            );
         } else {
             setForm(initialForm);
+            setImagePreview(null);
         }
-    }, [open, technicalCareer]);
 
-    const handleChange = (field: keyof TechnicalCareerForm, value: string) => {
+        clearTechnicalCareerError();
+
+    }, [open, technicalCareer?.careerId]);
+
+    useEffect(() => {
+        return () => {
+            if (imagePreview?.startsWith('blob:')) {
+                URL.revokeObjectURL(imagePreview);
+            }
+        };
+    }, [imagePreview]);
+
+    const handleChange = (
+        field: keyof Omit<TechnicalCareerForm, 'image'>,
+        value: string
+    ) => {
         setForm(previous => ({
             ...previous,
             [field]: value
         }));
-    }
+    };
 
-    const handlerClose = () => {
-        if (saving) {
+    const handleImageChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+
+        const file = event.target.files?.[0];
+
+        if (!file) return;
+
+        if (!['image/jpeg', 'image/png'].includes(file.type)) {
+            setFormError('Solamente se permiten imágenes JPG y PNG');
+            event.target.value = '';
             return;
         }
-        setForm(initialForm),
-            setFormError(null);
-        clearTechnicalCareerError();
-        onClose()
-    }
 
-    const handlerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+        if (file.size > 5 * 1024 * 1024) {
+            setFormError('La imagen no debe superar los 5 MB');
+            event.target.value = '';
+            return;
+        }
+
         setFormError(null);
+        setSelectedImage(file);
+        setImagePreview(URL.createObjectURL(file));
+
+        event.target.value = '';
+    };
+
+    const handlerClose = () => {
+
+        if (saving) return;
+
+        setForm(initialForm);
+        setSelectedImage(null);
+        setImagePreview(null);
+        setFormError(null);
+
+        clearTechnicalCareerError();
+
+        onClose();
+    };
+
+    const handlerSubmit = async (
+        event: React.FormEvent<HTMLFormElement>
+    ) => {
+
+        event.preventDefault();
+
+        setFormError(null);
+
+        const formData = new FormData();
+
+        formData.append('name', form.name.trim());
+        formData.append('description', form.description.trim());
+        formData.append('subTitle', form.subTitle.trim());
+
+        if (selectedImage) {
+            formData.append('image', selectedImage);
+        }
+
         try {
+
             if (isEditing && technicalCareer) {
-                const updatePayload: UpdateTechnicalCareerRequest = {
-                    name: form.name.trim(),
-                    description: form.description.trim(),
-                    subTitle: form.subTitle.trim(),
-                    image: form.image
-                };
-                await updateTechnicalCareer(technicalCareer.careerId, updatePayload);
+
+                await updateTechnicalCareer(
+                    technicalCareer.careerId,
+                    formData
+                );
+
                 await Swal.fire({
                     icon: 'success',
-                    title: 'Usuario actualizado',
+                    title: 'Carrera técnica actualizada',
                     text: 'Los cambios se guardaron correctamente',
                     confirmButtonText: 'Aceptar'
                 });
-                onClose();
+
+                handlerClose();
+
             } else {
-                const response = await createTechnicalCareer({ careerId: '', name: form.name.trim(), description: form.description.trim(), subTitle: form.subTitle.trim(), image: form.image.trim() })
+
+                const response = await createTechnicalCareer(formData);
+
                 if (!response.success || !response.data) {
-                    setFormError(response.errors?.[0] ?? response.message ?? 'No se pudo crear la carrera técnica');
+
+                    setFormError(
+                        response.errors?.[0] ??
+                        response.message ??
+                        'No se pudo crear la carrera técnica'
+                    );
+
                     return;
                 }
-                Swal.fire({
+
+                await Swal.fire({
                     icon: 'success',
-                    title: 'Gestion de roles',
-                    text: `Rol creado exitosamente`,
-                    footer: '<a href=\"#\">Cualquier inconveniente contacte al administrador</a>'
-                }).then(confirm => {
-                    if (confirm.isConfirmed) {
-                        handlerClose();
-                    }
+                    title: 'Carrera técnica creada',
+                    text: 'La carrera técnica se creó correctamente',
+                    confirmButtonText: 'Aceptar'
                 });
+
+                handlerClose();
             }
+
         } catch (error: any) {
-            setFormError(error?.message ?? 'Ocurrio un error al guardar el role');
+
+            setFormError(
+                error?.response?.data?.message ??
+                error?.message ??
+                'Ocurrió un error al guardar la carrera técnica'
+            );
         }
-    }
+    };
 
     return (
-        <Dialog open={open} onClose={handlerClose} fullWidth maxWidth="sm" >
+        <Dialog
+            open={open}
+            onClose={handlerClose}
+            fullWidth
+            maxWidth="sm"
+        >
+
             <DialogTitle>
-                {isEditing ? 'Editar TechnicalCareer' : 'Creear TechnicalCareer'}
+                {isEditing
+                    ? 'Editar Carrera Técnica'
+                    : 'Crear Carrera Técnica'}
             </DialogTitle>
+
             <Box component="form" onSubmit={handlerSubmit}>
+
                 <DialogContent>
-                    { formError && (<Alert security='error' sx={{ mb: 2}}>
-                        {formError}
-                    </Alert>)}
-                    <TextField label="Name" fullWidth margin='normal' value={form.name} onChange={e => handleChange("name", e.target.value)} required />
+
+                    {formError && (
+                        <Alert severity="error" sx={{ mb: 2 }}>
+                            {formError}
+                        </Alert>
+                    )}
+
+                    <TextField
+                        label="Nombre"
+                        fullWidth
+                        margin="normal"
+                        value={form.name}
+                        onChange={e =>
+                            handleChange('name', e.target.value)
+                        }
+                        required
+                    />
+
+                    <TextField
+                        label="Descripción"
+                        fullWidth
+                        margin="normal"
+                        multiline
+                        rows={3}
+                        value={form.description}
+                        onChange={e =>
+                            handleChange('description', e.target.value)
+                        }
+                        required
+                    />
+
+                    <TextField
+                        label="Subtítulo"
+                        fullWidth
+                        margin="normal"
+                        value={form.subTitle}
+                        onChange={e =>
+                            handleChange('subTitle', e.target.value)
+                        }
+                        required
+                    />
+
+                    <Box sx={{ mt: 3 }}>
+
+                        <Typography
+                            variant="subtitle2"
+                            sx={{ mb: 1 }}
+                        >
+                            Imagen de la carrera técnica
+                        </Typography>
+
+                        <Button
+                            component="label"
+                            variant="outlined"
+                            fullWidth
+                            startIcon={<ImageOutlinedIcon />}
+                        >
+                            Seleccionar imagen
+
+                            <input
+                                type="file"
+                                hidden
+                                accept="image/png,image/jpeg"
+                                onChange={handleImageChange}
+                            />
+                        </Button>
+
+                        {imagePreview && (
+                            <Box sx={{ mt: 2, textAlign: 'center' }}>
+
+                                <Box
+                                    component="img"
+                                    src={imagePreview}
+                                    alt="Imagen de carrera técnica"
+                                    sx={{
+                                        width: '100%',
+                                        maxWidth: 300,
+                                        height: 180,
+                                        objectFit: 'cover',
+                                        borderRadius: 2,
+                                        border: '1px solid #ddd'
+                                    }}
+                                />
+
+                            </Box>
+                        )}
+
+                        {selectedImage && (
+                            <Alert
+                                severity="info"
+                                sx={{ mt: 2 }}
+                            >
+                                Imagen seleccionada: {selectedImage.name}
+                            </Alert>
+                        )}
+
+                        {!imagePreview && (
+                            <Typography
+                                variant="caption"
+                                color="text.secondary"
+                                sx={{ display: 'block', mt: 1 }}
+                            >
+                                Formatos permitidos: JPG y PNG. Máximo 5 MB.
+                            </Typography>
+                        )}
+
+                    </Box>
+
                 </DialogContent>
+
                 <DialogActions sx={{ px: 3, pb: 3 }}>
-                    <Button type='button' variant='outlined' onClick={handlerClose} disabled={creating} sx={{ minWidth: 140 }} startIcon={<CancelIcon />}>
-                        Cancel
+
+                    <Button
+                        type="button"
+                        variant="outlined"
+                        onClick={handlerClose}
+                        disabled={saving}
+                        sx={{ minWidth: 140 }}
+                        startIcon={<CancelIcon />}
+                    >
+                        Cancelar
                     </Button>
-                    <Button type='submit' variant='contained' disabled={saving} startIcon={<SaveIcon />}>
-                        {saving ? 'Saving...' : isEditing ? 'Actualizar' : 'Save'}
+
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        disabled={saving}
+                        startIcon={<SaveIcon />}
+                    >
+                        {saving
+                            ? 'Guardando...'
+                            : isEditing
+                                ? 'Actualizar'
+                                : 'Guardar'}
                     </Button>
+
                 </DialogActions>
+
             </Box>
+
         </Dialog>
-    )
-}
+    );
+};
